@@ -1,0 +1,1046 @@
+<!doctype html>
+<html>
+<head>
+    <link href="{{url_for('static', filename='bootstrap.min.css')}}" rel="stylesheet" integrity="" crossorigin="anonymous">
+    <script src="{{url_for('static', filename='bootstrap.bundle.min.js')}}" rel="stylesheet" integrity="" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{{url_for('static',filename='spinner.css')}}"/>
+    <title>{% block title %}{% endblock %}</title>
+
+<style>
+
+    /* body {
+        margin: 0;
+        padding: 0;
+        font-family: sans-serif;
+        background: linear-gradient(to right, #b92b27, #1565c0);
+        background:rgb(245,245,245);
+    } */
+
+</style>
+
+</head>
+<header>
+
+    <nav class="navbar navbar-light bg-dark">
+        <img src="{{url_for('static', filename='ford-logo.png')}}" width='10%' />
+        <a class='navbar-brand' style="color:white; padding-right:40%">GCC - DATA FACTORY TICKETING FORM</a>
+    </nav>
+
+</header>
+<body>
+
+    <div class="container shadow min-vh-100 py-2 text-secondary" style="width: 75%;" >
+
+        
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                    <!-- {{message}} -->
+                        {% if "Error" not in message: %}
+                        <div class="alert alert-info">
+                            <!-- <strong>Success! </strong> {{ message}}</div> -->
+                            <strong> </strong> {{ message}}</div>
+                            <!-- reset(); -->
+                        {% endif %}
+                        
+                        {% if "Error" in message[1]: %}
+                        <div class="alert alert-warning">
+                            { { message[1] }}</div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+
+        <!-- <form id="frm" action="http://localhost:5000/process" method="post" role="form"> -->
+        <form id="frm" action="./process" method="post" role="form">
+
+        <!--
+            =================== USER ID ===================
+        -->
+
+        <div class="row gx-3 gy-2 " >
+            <label for="uid" class="col-sm-2 col-form-label col-form-label-sm"><strong>User ID</strong> </label>
+            <div class="col-md-3">
+                <input class="form-control form-control-sm" type="text" id="uid" name="CDSID" maxlength="9" placeholder="Enter your CDSID" required>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="input-group input-group-sm mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">OnBehalf</span>
+                    <input type="text" class="form-control" maxlength="9" name="OBH_UNAME" placeholder="Request for someone">
+                </div>
+            </div>
+            
+        </div>
+
+
+        <!--
+            =================== TYPE ===================
+        -->
+        <div class="row gx-3 gy-2 " >
+        <!-- <div class="row mb-3"> -->
+            <label for="TYPE_LIST" class="col-sm-2 col-form-label col-form-label-sm"><strong>Type</strong></label>
+            <div class="col-sm-3">
+                <div class="btn-group-sm" role="group" aria-label="Basic radio toggle button group">
+                    <input type="radio" class="btn-check" name="Type-radio-Btn" id="inc" autocomplete="off" value="INC" required>
+                    <label class="btn btn-outline-primary" for="inc" >Incident</label>
+                  
+                    <input type="radio" class="btn-check" name="Type-radio-Btn" id="wo" autocomplete="off" value="WO" required>
+                    <label class="btn btn-outline-primary" for="wo" >WorkOrder</label>
+                </div>
+            </div>
+
+
+        <!--
+            =================== CATE ===================
+        -->
+        <!-- <div class="row mb-3"> -->
+			<div class="row gx-3 gy-2 " >
+				<label for="CAT_TYPE_LIST" class="col-sm-2 col-form-label col-form-label-sm"><strong>Category</strong></label>
+				<div class="col-sm-3">
+					<div class="btn-group-sm" role="group" aria-label="Basic radio toggle button group">
+						<input type="radio" class="btn-check" name="Type-radio-Btn1" id="source" autocomplete="off" value="source" required>
+						<label class="btn btn-outline-primary" for="source">Source/Data Product</label>
+					  
+						<input type="radio" class="btn-check" name="Type-radio-Btn1" id="platform" autocomplete="off" value="platform" required>
+						<label class="btn btn-outline-primary" for="platform">Platform</label>
+					</div>
+				</div>
+				
+				<div class="col-md-5">
+					<div class="input-group input-group-sm mb-3">
+						<span class="input-group-text" id="inputGroup-sizing-sm">Sub Category</span>
+						<!-- <select id="DETAILS_LIST" name="DETAILS_LIST" class="form-control form-control-sm" required onChange="changecat(this.value);" onchange="updateTitleTextbox()"> -->
+						<select id="DETAILS_LIST" name="DETAILS_LIST" class="form-control form-control-sm" required onchange="handleChange(this.value)">
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+        <!--
+            =================== Application ===================
+        -->
+        <div class="row gx-3 gy-2 ">
+                <div class="col-md-4">
+                    <div class="input-group input-group-sm mb-3">
+                        <span class="input-group-text" id="inputGroup-sizing-sm">Assignment Group</span>
+                        <select id="QUELIST" name="QUELIST" class="form-control form-control-sm" required>
+                        </select>
+                    </div>
+                </div>
+        </div>
+
+
+        <!--
+            =================== Category ===================
+        -->
+        <!-- <div class="row mb-3 divHide" style="visibility: hidden;display:none"> -->
+        <div class="row mb-3" >
+            <label for="SUB_CATE_LIST" class="col-sm-2 col-form-label col-form-label-sm"><strong>Issue Type</strong></label>
+            <div class="col-sm-10">
+                <select class='form-control form-control-sm' id="SUB_CATE_LIST" name="SUB_CATE_LIST" required onchange="updateTitleTextbox()">
+                    <option value=""></option>
+                    <option value="Access Issue">Access Issue</option>
+                    <option value="Outage">Outage</option>
+                    <option value="Data Issue">Data Issue</option>
+                    <option value="Performance Issue">Performance Issue</option>
+                    <option value="Storage Issue">Storage Issue</option>
+                    <option value="Others">Others</option>
+
+                </select>
+            </div>
+            
+        </div>
+
+
+        <!-- 
+            =================== Priority ===================
+        -->
+        <!-- <div class="row mb-3 divHide" style="visibility: hidden;display:none"> -->
+        <div class="row mb-3">
+            <label for="PRI_LIST" class="col-sm-2 col-form-label col-form-label-sm"><strong>Select the Priority</strong></label>
+            
+            <!-- Bootstrap Radio Button Group -->
+            <div class="col-sm-10">
+                <div class="btn-group-sm " role="group">
+                    <input type="radio" name="Priority-radio-Btn" class="btn-check" id="radioBtn1" value="Critical">
+                    <label class="btn btn-outline-danger" for="radioBtn1">Critical</label>
+
+                    <input type="radio" name="Priority-radio-Btn" class="btn-check" id="radioBtn2" value="High">
+                    <label class="btn btn-outline-warning" for="radioBtn2">High</label>
+
+                    <input type="radio" name="Priority-radio-Btn" class="btn-check" id="radioBtn3" checked value="Medium">
+                    <label class="btn btn-outline-primary" for="radioBtn3">Medium</label>
+
+                    <input type="radio" name="Priority-radio-Btn" class="btn-check" id="radioBtn4" value="Low">
+                    <label class="btn btn-outline-success" for="radioBtn4">Low</label>
+                </div>
+            </div>
+
+        </div>
+
+
+
+        <!-- 
+            =================== Title ===================
+        -->
+
+        <div class="row mb-3">
+            <label for="title_textbox" class="col-sm-2 col-form-label col-form-label-sm" ><strong>Title</strong></label>
+            <div class="col-sm-10">
+                <input class="form-control form-control-sm" type="text" id="title_textbox" name="title_textbox"  placeholder="Enter Issue title" class='form-control form-control-sm'  required></textarea>
+            </div>
+        </div>        
+        <!-- =================== Description =================== -->
+        <div class="row mb-3">
+                <label for="description_textbox" class="col-sm-2 col-form-label col-form-label-sm" ><strong>Description</strong></label>
+                <div class="col-sm-10">
+                    <textarea id="description_textbox" name="description_textbox" placeholder="Enter Issue Description..." class='form-control form-control-sm' style="height:150px" required></textarea>
+                </div>
+        </div>
+        
+        
+        <!-- 
+            =================== Button ===================
+        -->
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end" >
+            <button type="submit" id="btnsbt" class="btn btn-primary" onclick="submitRecord()">Submit</button>
+            <button type="reset" id="btnclr" class="btn btn-outline-danger" onclick="resetForm()" >Clear</button>    
+        </div>
+    
+    </div>
+
+
+
+
+
+   
+    <div id="overlay" class="overlay">
+    
+    
+        <div id="spin" class="d-flex justify-content-center text-light" style="margin-top:10%">
+            <div class="spinner-grow" role="status" style="animation-delay: 1s"></div>
+            <div class="spinner-grow" role="status" style="animation-delay: 1.2s"></div>
+            <div class="spinner-grow" role="status" style="animation-delay: 1.3s"></div></br>
+        </div>
+        <!-- <div class="row justify-content-center text-light">
+            <span id="msg"> <h2>Submiting!</h2></span>        
+        </div> -->
+    </div> 
+
+
+
+</body>
+    <script>
+        function submitRecord(){
+            var elements = document.getElementById("frm").elements;
+            console.log('frm:'+elements);
+            var frm_status = true;
+            writeCookie();
+            for (var i = 0, element; element = elements[i++];) {
+               if (element.hasAttribute('required') && element.value === ""){
+                    console.log("it's an empty textfield");
+                    frm_status = false;
+               }
+            }
+            if(frm_status===true){
+                document.getElementById("overlay").style.width="100%";
+                //document.getElementById("spanner").classList.add("show");
+                document.getElementById("overlay").classList.add("show"); 
+                document.getElementById("spin").style.visibility="visible";
+                //document.getElementById("container").style.visibility="hidden";
+                //document.getElementById("container").style.display="none"; 
+            }
+
+            // if(frm_status===true){
+            //     document.getElementById("spanner").classList.add("show");
+            //     document.getElementById("overlay").classList.add("show");
+            // }
+
+        }
+
+        function setMessage(msg){
+            document.getElementById("msg").innerHTML=msg;
+        }
+
+        // function ShowHideDiv1(resolution) {
+        //     var res = document.getElementById("resolution");
+        //     res.style.visibility = resolution.checked ? "visible" : "hidden";
+        //     res.style.display= resolution.checked ? "flex" : "none";
+        //     document.getElementById("resolution_textbox").value="";
+        // }
+
+        function ShowHideDiv(category) {
+            console.log('category:'+category);
+            // var elements = document.getElementsByClassName('divHide');
+            var elements = document.querySelectorAll("[class*=divHide]");
+            console.log('class elements:'+JSON.stringify(elements));
+            var frm_status = true;
+            for (var i = 0, element; element = elements[i++];) {
+            element.style.visibility = category.checked ? "visible" : "hidden";
+            element.style.display= category.checked ? "flex" : "none";
+            console.log('inside '+i+':'+element.style.visibility);
+            }
+        }
+
+        function reset(){
+            alert("hi");
+        }
+
+
+
+
+        document.body.addEventListener('change', function (e) {
+            let target = e.target;
+            let message;
+            ChangecatList(target.id);
+        });
+
+
+        function ChangecatList(typeId) {
+            
+            var typeObj = {};
+            typeObj['source'] = ["MAIVS","Order Management","Penske DW","eCATS","GTT","Sensoteq","ADA","TCU4G FCS FTESS","MCPV","FMCC Ingestion","One Magnify","Modele Ford Direct lead","VOP","New Veh Cust Study","Turnkey","State Transition Feed","Sync Analytics","Stolen Vehicle Services","PUR","EUCDM","CCAPS","GRCA","CPARS","DOLVOL","CRR","TCU4G","Trip Summary FCS","SCA-C NA DB2","TCU4G Landing","GOALS","SSVD","FCCN","FMCC Commercial 360","MMP","QLSCM","Mkth Prgm Sys 2","Released ECU Build Versions","VHA Prognostics Dashboard","EuPS-OSCAR","fpa","EU Consent - Common processing","ETISIDS","VVApl","data deidentification","FedEx","United radio","DPA1","GWTS","ISO Country Table 2","SIN","Early Access Program","jasper","riskmgmt","GVMR","MECM","FordDirect / Auto Alert","Do Not Call Brazil","Risk Scoring Originations NA","FEDEBOMRPT","TWOS","DPR","WVTA755","GeP","Trip Weather Summary","QLSVO","Data Factory Data Quality","IMPRS","AOD","PTMS","Supplier IO","WIPS","SUPERG","VEPIS","Avaya","MIcrosoft Office 365","GPO","BOMF","GERF","WQR","IVICwd","CDP Purchasing","VMACS-eu","GWFS","SMART","GIROBS","CXP","GILT","eAPQP","WPAC","ABC Scale","eGMT","ACSPD","RIVAT","Ford Pro Insure","PANDA","ASR GL","vfs","HCM","CLIMES","SAPGlobal","fac","Responder","FordPass Guides","CVD2X","Daily Summary PSU","DIDDNF","pcmspec","ICI CM","Cisco Webex","trip summary product","Active VIN Summary PJ1","GEVIS","WIL","WIL PSU","DTC Summary PSU","Charging Energy Services","MIC","IgnitionCycleSummaryPSU","iNexus","Plant Vehicle Locator","FCSDSM","PAAK Summary","VLM","Master Vin Summary","Strategy Part Number","Daily Summary PRS","NAVIS","APIPROD","Park Summary","CVMS","SSP Summary","CMMS3 MVP","Model E Dealer Std Perf","ECC Data Product","KBS","JD Power PIN Plus","EuAS-GAPS","FMCC Ford Pro Salesforce","FMCC eCommerce","maps","RCL Renewals Terminations","GIVIS","GSET","ALD","CFF","ORB","GVDS","ITSA","IPS  CN","DSV","GECHUB","fst-ra reporting - analytical","FFM Dual Enrollment","VROPS","FMCCIS","EAMS","TCU4G UBI","TCU4GVWCPU","TCU4GFleetFCS","Dealer Incomplete Recall Repair Process","COPAC","Condition Based Monitor","ARCK","EPSKSDM","GBMS NG","GOTDSAC","VIPSVMPS","Prospector","CRM SAP","Freight Verify","Electronic Surface Change Request","EuAS-CiTiS","Broadcast","PACE authevent product","LivingstonFTA","TCU CommandandResponse","SCACGFIN","RCT","Global 8D","XPO NLM","EuAS-PDB","Monex","ASR-AR","CCS FCS","FOMS","Global ESB System","BLESSREC","Electronic Information System","MPDA","Ent Identity Mgmt","PEDDS","FNBO","GN","ESBOL","STARS","SERVIS2","GPPS","FCS BAAN","First Base Customer Unsubscribe Process","AACLKSTRMEU","Mobile Service Dealer","Checksheets Service","FEDEBOM","CO2FEC","AACLKSTRMNA","ESPS","APB2CSL","SMARTS","Vincent","Deal Maker","FCSDQuality","SARS","CVDOS Scheduler CMD Logs","FDSP","ATS","OASIS","CUSTDMN","Banking Enablement Systems","AVD CLSFCN","Payments","IMS Port Block","Digital Demand Report","JD Model e Ecom","C360 MODEL QLIK","FEDE DV Extract","EuAS-ERES","SIOMMA","IgnitionCycleSummaryFCS","VEV Dashboard Extract","AMEXWork","SCCAF","Common Supplier","xirgo","WPP 3rd party data","CCS","purchasing datahub","Agenda","FIS","REDCRS","ATT wifi hotspot","OTAConnectedVehicle","GCAMP","ACTVIN","FCSVoyager","EPSKS","Pinnacle Loan Originations","FMCC Direct Feed","FCMS","Model E Canadian Dealer Tools","Pinnacle Account Services","DISNE","FMCC Risk Modeling Mart","GSLTS","YMS1","QNPS","WERS-ADHOC","DTC","JD Power FCSD Warranty Underwriting","DTA Service","Imagine  NBSC LTS","Daily Summary","Motorintelligence","SNURK","EuAS-AIMS","Experian","LivingstonImp","ServiceBay","DFDlrServiceExpectancy","app feedback data","IMS Share Calculations","iperceptions tcx","TCU4G PRS","IgnitionCycleSummary","GLAS","ACS","MPA","Sales Force","Integrated Services","Supplier","FordPass App","SOFRELS","Churn Rpt","CEPS P","OTA","DTC Summary PJ1","Workforce","Model E Dealer Dashboard Waiver","PARMS","north america services api","FMCC Workflow","ibuy","Ariba Direct Sourcing","Used Vehicle Information System","IHS","CVAS","GOLDD","MPA and MPDA","VLM Master VIN SPN","PACE G2G C2V auth","CCS and CCSFCS","PeakDrivingTimePredictn","CN204","ASU Summary","FC Ext Interfaces","OTACV data products","cloc invitation","ARVE","VDDS","active vin summary prs","DPES","ASAP","Amplitude","Active VIN Summary PSU","EuFA-GRIMM","IRIS","Caliber","DTC Summary PRS","FAD Sales Reporting","Lending Automotive","NOBLE DIALER FILES","MMA","Medallia _PTS","Adobe Marketing Cloud","Pinnacle Account Servicing Batch","RMS","Prognostics Analytics Engine","PATEN","DMSR","SAVE","GODW","Subscription Services Platform","EPID2","GVAP","GUCCE","NextGen DM","CEDTE Intelligent Range","AVD","C360UCE","FBBP","Account Manager na","KBS Mainframe","Global Product Development System","Trip Summary PSU","SLT Reporting","c360 uce eu","SMARTBOARD","Vin to ISO Country","SSAT","Weather Source","FBMS","Melissa data","UQM DM","FIS Dealer Finance","WIL PRS","GPIRS","WIL PJ1","OMS IBM Sterling","Enhanced Parts Follow Up","CEPS NonP GCP","SNURK2","AVDD Carmon and scrpt","C360 UCE TBQ 2","fcdataplex","My Next Vehicle","MECM DM","DP DM","FMCC Dealer Advisor Mart","CVMS US Company Vehicles","ToolsNet","Fastmarkets","EUMT","MAIVS DM","vodafone","zubie","Alteris","TopTechs","TCX Survey Response","Debt Manager","Pinnacle Common Logon","Global Collections System","C360 CRM Campaign and Consent","calibre","FMCC Lending Automotive Mart","grdb dm","comscore","gdia","kantar","brandwatch","gcp - jd power","Customer Experience DM","DoMtoPlantsDictionary","Global Brand Health Study","MORLEY","Rapid Ratings","Dun and Bradstreet","MSX Express","helix","SyncroPro Portugal Fleet","Wunderman Fleet Spain","wards","Consumer AXZ","Prevalent","GCQIS Data Mart","jackson dawson","Privilege Club","FNBO Loyalty Credit Card","dpa5","FIMPS","QED Morley","VisPVSVAL","Vehicle Service 360","ARFD","Vehicle Charging DataProduct","CAPS PG CS","SWT","FCSD eCommerce","ICS","CPO","trip summary","SunRun","GCP","eRMA","BNPP","NDPC II","Cyclone City Van","MyCDHR","CVFMA","Sales Force EU CRM","Ford Pro Commercial Vehicle Center","Concentrix","CRIS2","Special Request","DSR","Dealer Wholesale and Vehicle","CDM","AFRL","FST FVA","GPW","IgnitionCycleSummaryPRS","Promata Fleet","Special Service Support Center Website","CMMS3","JD Power Helix","MarketSource","customer financial","Data Factory Admin Projects Metadata","Contest","EuroVIS","GSEC","ICBC","TFOAMS","FACTONEPC","IVI Analytics Taxonomy","pega","eLearnVAL","Residual API","GRCAM","Blue Cruise","OWSClaims","FC CIS","ARDR","ARMR","DriverScoreData","OCU4","EuroMivis","TER","LEAP","Trip Summary PJ1","WQ","Enrollment Gateway","Qmerit","MFM","FP Zuora","AWS","CAPS","Trip Summary PRS","Internal Fitness Data","CDM TBQ","midas","EDW-GDW","ecrmldm","WMA","FMCC Email Campaign","GSPAS","FMCC Logging XREF","IERP","Phone as a Key","TCU4G PSU","TCU4G PJ1","PDTP","TCU4G FCS","QAD","Dynatrace","TCU4Gcom360","TCU4G FCS AVIS","PTA","Vehicle Marketing","Financial Accounting","Release Pull Ahead","Datamart for Software and Technology","VISTA","DTC Summary","TCU4G Datawarehouse","CPRII","Active Vin Summary","customer subject area","STG CDM","IgnitionCycleSummary DW","Daily Summary DW","WIL Summary","vehdc","WSMOD","GCVP","Ford Direct","AOTVOTPOLK","AgingPoints","Bond FGE Immersion Training","CISCO","MEVIS","SAMIS","GTAC","BDI","SCA-C EU SQL","Market Analyzer","GFORCE3","CUCM","US Weekly Sales Feed","TMAC","NASARS","Sell out reporting","Master Vehicle List","PinnacleLO","Mailing Pref Service","Cthames Disposal","FBC","fptlds","DCDS","Medallia","Competitive Data Engine","GLADS","Engagement Communication and Response","Salesforce","DS-DC","Poland Fleet","Deal Marketing Platform","DELIVR","Campaign Administration and Microsites","SEER","Market Rep","SCA CP","GCCTMSD","SCA-C-CAP","GEMSL","GCCT","Sales Daily Monthly","SCA-C EU DB2","Sales Force C360SF","NMPGPS","IMLFP","DETC","BOBQUOTE","Fuel Tank Capacity","EOL Quality Suite","GCQIS","MOCA","EUROVAC","QWX","QDAS","AIMWEB","Attribute Based Access Control","ILM","PCM","EVMS","WADR","CARE","CRID2","FOCFPSD","SABA","VMFE","GI TI","PERS","gem","IVMR","VID","GOTDGWS","SPCPS","HRIMS","PRISM","OnTrack MIS","ESPARS","iERP Finance","BlackLine Account Reconciliation","PCAM","sc360","EIdM","Ford Policy Portal","WF1","OES","EuMP-PFEP","PDO","GTSV","MPNR","GSDB","CM4D","Integrity","PDOR2","GOTD-OGMF","OFMDW","Capability Study","VDLS","HVBOM","Biztalk","SOE","STAMPS","EuPFS-PVS","ECIS","GSPAS DM","mmhp premium freight","OSB","PEARS","TVMER","FMS","PTOOBL","ECICDR","BSAQ","OMS-SOB","CEVA","MFM DM"];
+            typeObj['platform'] = ["Data Catalog","Classification","Curation Tools","Data Access and Controls","Data De-id","DF Third Party","Data Quality Central","Enterprise Data Ingestion","DF Enablement","Metadata UI","DF Operational","User Activity Monitoring","Vehicle Informatics","FMCC Google Cloud Analytics Platform","Software & Technology Data Excellence","Others"];
+            
+            var catList = document.getElementById('DETAILS_LIST');
+            
+            if(typeObj[typeId]!=undefined){
+                document.querySelectorAll('#DETAILS_LIST option').forEach(option => option.remove()); // Clear the fields based on selection
+                for (i = 0; i < typeObj[typeId].length; i++) {
+                    var cat = new Option( typeObj[typeId][i], typeObj[typeId][i]);
+                    catList.options.add(cat);
+                }
+                // console.log(catList);
+            }
+                
+        }
+
+        
+
+
+        // setCookie() function
+        var today = new Date();
+        var expiry = new Date(today.getTime() + 30 * 24 * 3600 * 1000); // plus 30 days
+
+        function setCookie(name, value)
+        {
+            document.cookie=name + "=" + escape(value) + "; path=/; expires=" + expiry.toGMTString();
+        }
+
+        function writeCookie()  
+        {
+            var form = document.getElementById("frm");
+            setCookie("CDSID", form.CDSID.value);
+            return true;
+        }
+
+        function readCookie(name)
+        { 
+            var re = new RegExp(name + "=([^;]+)");
+            var value = re.exec(document.cookie);
+            console.log("Cookies:"+value);
+            return (value != null) ? unescape(value[1]) : null;
+        }
+        
+        // Loading cookie values into the form
+        var cookie_val = readCookie("CDSID");
+        if(cookie_val !== "") {
+            document.getElementById("uid").value = cookie_val;
+        }
+
+    
+    
+    // Code for Sub Application Selection
+    var SubAppByCategory = {
+	"Data Catalog" : ["APP DF CATALOG 001"],
+    "Classification" : ["APP DF CLASSIFY 001"],
+    "Curation Tools" : ["APP DF CURATION 001"],
+    "Data Access and Controls" : ["APP DF DAC 001"],
+    "Data De-id" : ["APP DF DATA DE-ID 001"],
+    "Data Quality Central" : ["APP DF DQ 001"],
+    "Enterprise Data Ingestion" : ["APP DF EDI 001"],
+    "DF Enablement" : ["APP DF ENABLEMENT 001"],
+    "Ingestion Tools" : ["APP DF INGESTION 001"],
+    "Metadata UI" : ["APP DF METADATA 001"],
+    "DF Operational" : ["APP DF OPERATIONAL 001"],
+    "User Activity Monitoring" : ["APP DF UAM 001"],
+    "Vehicle Informatics" : ["APP DF VI 001"],
+    "Others" : ["APP OPS PD DF 001"],
+    "FMCC Google Cloud Analytics Platform" : ["FCGCP-DATAENG SUPPORT DEV"],
+    "Software & Technology Data Excellence" : ["SOFTWARE & TECHNOLOGY DATA STEWARD"],
+	"DF Third Party" : ["APP DF Third Party 001"],
+	"AIMWEB" : ["APP DF EDI 001"],
+	"Salesforce" : ["APP DF EDI 001"],
+	"Customer Analytics Modeling Scores" : ["APP DF EDI 001"],
+	"DeviceWise Hot Stamping" : ["APP DF EDI 001"],
+	"OFMDW" : ["APP DF EDI 001"],
+	"Ford Pro Commercial Vehicle Center" : ["APP DF EDI 001"],
+	"Account Reconciliation" : ["APP DF EDI 001"],
+	"Fuel Tank Capacity" : ["APP DF EDI 001"],
+	"WIDWA" : ["APP DF EDI 001"],
+	"Ford Pro Comm360" : ["APP DF EDI 001"],
+    "MAIVS" : ["APP DF OPERATIONAL 001"],
+"Order Management" : ["APP C360 DATA WAREHOUSE 001"],
+"Penske DW" : ["APP DF OPERATIONAL 001"],
+"eCATS" : ["APP DF OPERATIONAL 001"],
+"GTT" : ["APP C360 DataLake Data Stewards 001"],
+"Sensoteq" : ["APP DF OPERATIONAL 001"],
+"ADA" : ["APP DF VI 001"],
+"TCU4G FCS FTESS" : ["APP DF VI 001"],
+"MCPV" : ["APP DF EDI 001"],
+"FMCC Ingestion" : ["FCGCP-DataEng Support Dev"],
+"One Magnify" : ["APP DF Third Party 001"],
+"Modele Ford Direct lead" : ["APP C360 DataLake Data Stewards 001"],
+"VOP" : ["APP DF EDI 001"],
+"New Veh Cust Study" : ["APP DF Third Party 001"],
+"Turnkey" : ["APP C360 DataLake Data Stewards 001"],
+"State Transition Feed" : ["APP DF VI 001"],
+"Sync Analytics" : ["APP DF VI 001"],
+"Stolen Vehicle Services" : ["APP DF VI 001"],
+"PUR" : ["APP DF EDI 001"],
+"EUCDM" : ["APP C360 DATA MARTS 001"],
+"CCAPS" : ["APP OPS GDIA 001"],
+"GRCA" : ["APP OPS GDIA 001"],
+"CPARS" : ["APP DF EDI 001"],
+"DOLVOL" : ["APP DF EDI 001"],
+"CRR" : ["APP C360 DataLake Data Stewards 001"],
+"TCU4G" : ["APP DF VI 001"],
+"Trip Summary FCS" : ["APP DF VI 001"],
+"SCA-C NA DB2" : ["APP C360 DataLake Data Stewards 001"],
+"TCU4G Landing" : ["APP DF VI 001"],
+"GOALS" : ["APP C360 DataLake Data Stewards 001"],
+"SSVD" : ["APP DF OPERATIONAL 001"],
+"FCCN" : ["APP C360 DataLake Data Stewards 001"],
+"FMCC Commercial 360" : ["FCGCP-DataEng Support Dev"],
+"MMP" : ["APP C360 DataLake Data Stewards 001"],
+"QLSCM" : ["APP DF OPERATIONAL 001"],
+"Mkth Prgm Sys 2" : ["APP C360 DataLake Data Stewards 001"],
+"Released ECU Build Versions" : ["APP DF OPERATIONAL 001"],
+"VHA Prognostics Dashboard" : ["APP DF VI 001"],
+"EuPS-OSCAR" : ["APP DF EDI 001"],
+"fpa" : ["APP C360 DataLake Data Stewards 001"],
+"EU Consent - Common processing" : ["APP DF VI 001"],
+"ETISIDS" : ["APP DF VI 001"],
+"VVApl" : ["APP OPS GDIA 001"],
+"data deidentification" : ["APP DF DATA DE-ID 001"],
+"FedEx" : ["APP DF Third Party 001"],
+"United radio" : ["APP DF Third Party 001"],
+"DPA1" : ["APP OPS GDIA 001"],
+"GWTS" : ["APP OPS GDIA 001"],
+"ISO Country Table 2" : ["APP DF OPERATIONAL 001"],
+"SIN" : ["APP C360 DataLake Data Stewards 001"],
+"Early Access Program" : ["APP DF VI 001"],
+"jasper" : ["APP DF VI 001"],
+"riskmgmt" : ["FCGCP-DataEng Support Dev"],
+"GVMR" : ["APP DF OPERATIONAL 001"],
+"MECM" : ["APP DF OPERATIONAL 001"],
+"FordDirect / Auto Alert" : ["APP C360 DATA MARTS 001"],
+"Do Not Call Brazil" : ["APP C360 DataLake Data Stewards 001"],
+"Risk Scoring Originations NA" : ["FCGCP-DataEng Support Dev"],
+"FEDEBOMRPT" : ["APP DF EDI 001"],
+"TWOS" : ["APP DF OPERATIONAL 001"],
+"DPR" : ["APP DF OPERATIONAL 001"],
+"WVTA755" : ["APP DF OPERATIONAL 001"],
+"GeP" : ["APP C360 DataLake Data Stewards 001"],
+"Trip Weather Summary" : ["APP DF VI 001"],
+"QLSVO" : ["APP DF OPERATIONAL 001"],
+"Data Factory Data Quality" : ["APP DF DQ 001"],
+"IMPRS" : ["APP DF OPERATIONAL 001"],
+"AOD" : ["APP DF OPERATIONAL 001"],
+"PTMS" : ["APP DF OPERATIONAL 001"],
+"Supplier IO" : ["APP DF EDI 001"],
+"WIPS" : ["APP DF EDI 001"],
+"SUPERG" : ["APP DF OPERATIONAL 001"],
+"VEPIS" : ["APP DF OPERATIONAL 001"],
+"Avaya" : ["APP C360 DataLake Data Stewards 001"],
+"MIcrosoft Office 365" : ["Software & Technology Data Steward"],
+"GPO" : ["APP DF OPERATIONAL 001"],
+"BOMF" : ["APP DF OPERATIONAL 001"],
+"GERF" : ["APP DF OPERATIONAL 001"],
+"WQR" : ["APP DF OPERATIONAL 001"],
+"IVICwd" : ["APP DF OPERATIONAL 001"],
+"CDP Purchasing" : ["APP DF EDI 001"],
+"VMACS-eu" : ["APP DF OPERATIONAL 001"],
+"GWFS" : ["APP DF OPERATIONAL 001"],
+"SMART" : ["APP DF OPERATIONAL 001"],
+"GIROBS" : ["APP DF OPERATIONAL 001"],
+"CXP" : ["APP DF OPERATIONAL 001"],
+"GILT" : ["APP DF OPERATIONAL 001"],
+"eAPQP" : ["APP DF EDI 001"],
+"WPAC" : ["APP DF OPERATIONAL 001"],
+"ABC Scale" : ["APP DF OPERATIONAL 001"],
+"eGMT" : ["APP DF OPERATIONAL 001"],
+"ACSPD" : ["APP DF OPERATIONAL 001"],
+"RIVAT" : ["APP DF EDI 001"],
+"Ford Pro Insure" : ["FCGCP-DataEng Support Dev"],
+"PANDA" : ["APP C360 DataLake Data Stewards 001"],
+"ASR GL" : ["APP DF OPERATIONAL 001"],
+"vfs" : ["APP DF OPERATIONAL 001"],
+"HCM" : ["APP DF OPERATIONAL 001"],
+"CLIMES" : ["APP C360 DataLake Data Stewards 001"],
+"SAPGlobal" : ["APP DF OPERATIONAL 001"],
+"fac" : ["APP DF OPERATIONAL 001"],
+"Responder" : ["APP C360 DataLake Data Stewards 001"],
+"FordPass Guides" : ["APP C360 DataLake Data Stewards 001"],
+"CVD2X" : ["APP DF VI 001"],
+"Daily Summary PSU" : ["APP DF VI 001"],
+"DIDDNF" : ["APP C360 DataLake Data Stewards 001"],
+"pcmspec" : ["APP DF OPERATIONAL 001"],
+"ICI CM" : ["APP C360 DataLake Data Stewards 001"],
+"Cisco Webex" : ["Software & Technology Data Steward"],
+"trip summary product" : ["APP DF VI 001"],
+"Active VIN Summary PJ1" : ["APP DF VI 001"],
+"GEVIS" : ["APP DF OPERATIONAL 001"],
+"WIL" : ["APP DF VI 001"],
+"WIL PSU" : ["APP DF VI 001"],
+"DTC Summary PSU" : ["APP DF VI 001"],
+"Charging Energy Services" : ["APP DF OPERATIONAL 001"],
+"MIC" : ["APP DF OPERATIONAL 001"],
+"IgnitionCycleSummaryPSU" : ["APP DF VI 001"],
+"iNexus" : ["APP DF EDI 001"],
+"Plant Vehicle Locator" : ["APP DF VI 001"],
+"FCSDSM" : ["APP DF VI 001"],
+"PAAK Summary" : ["APP DF VI 001"],
+"VLM" : ["APP DF VI 001"],
+"Master Vin Summary" : ["APP DF VI 001"],
+"Strategy Part Number" : ["APP DF VI 001"],
+"Daily Summary PRS" : ["APP DF VI 001"],
+"NAVIS" : ["FCGCP-DataEng Support Dev"],
+"APIPROD" : ["APP DF OPERATIONAL 001"],
+"Park Summary" : ["APP DF VI 001"],
+"CVMS" : ["APP DF OPERATIONAL 001"],
+"SSP Summary" : ["APP DF VI 001"],
+"CMMS3 MVP" : ["APP DF OPERATIONAL 001"],
+"Model E Dealer Std Perf" : ["C360 Use Case Enablement"],
+"ECC Data Product" : ["C360 Use Case Enablement"],
+"KBS" : ["FCGCP-DataEng Support Dev"],
+"JD Power PIN Plus" : ["APP DF Third Party 001"],
+"EuAS-GAPS" : ["APP DF OPERATIONAL 001"],
+"FMCC Ford Pro Salesforce" : ["FCGCP-DataEng Support Dev"],
+"FMCC eCommerce" : ["FCGCP-DataEng Support Dev"],
+"maps" : ["FCGCP-DataEng Support Dev"],
+"RCL Renewals Terminations" : ["FCGCP-DataEng Support Dev"],
+"GIVIS" : ["FCGCP-DataEng Support Dev"],
+"GSET" : ["APP DF Operational 001"],
+"ALD" : ["APP C360 DataLake Data Stewards 001"],
+"CFF" : ["APP DF OPERATIONAL 001"],
+"ORB" : ["Software & Technology Data Steward"],
+"GVDS" : ["APP DF OPERATIONAL 001"],
+"ITSA" : ["Software & Technology Data Steward"],
+"IPS  CN" : ["APP DF OPERATIONAL 001"],
+"DSV" : ["APP DF OPERATIONAL 001"],
+"GECHUB" : ["Software & Technology Data Steward"],
+"fst-ra reporting - analytical" : ["APP DF OPERATIONAL 001"],
+"FFM Dual Enrollment" : ["APP DF VI 001"],
+"VROPS" : ["Software & Technology Data Steward"],
+"FMCCIS" : ["FCGCP-DataEng Support Dev"],
+"EAMS" : ["Software & Technology Data Steward"],
+"TCU4G UBI" : ["APP DF VI 001"],
+"TCU4GVWCPU" : ["APP DF VI 001"],
+"TCU4GFleetFCS" : ["APP DF VI 001"],
+"Dealer Incomplete Recall Repair Process" : ["APP DF EDI 001"],
+"COPAC" : ["APP DF OPERATIONAL 001"],
+"Condition Based Monitor" : ["APP OPS PD DF 001"],
+"ARCK" : ["APP C360 DataLake Data Stewards 001"],
+"EPSKSDM" : ["APP OPS PD DF 001"],
+"GBMS NG" : ["APP C360 DataLake Data Stewards 001"],
+"GOTDSAC" : ["APP DF OPERATIONAL 001"],
+"VIPSVMPS" : ["APP C360 DataLake Data Stewards 001"],
+"Prospector" : ["APP C360 DataLake Data Stewards 001"],
+"CRM SAP" : ["APP C360 DataLake Data Stewards 001"],
+"Freight Verify" : ["APP DF OPERATIONAL 001"],
+"Electronic Surface Change Request" : ["APP DF OPERATIONAL 001"],
+"EuAS-CiTiS" : ["APP DF OPERATIONAL 001"],
+"Broadcast" : ["APP OPS PD DF 001"],
+"PACE authevent product" : ["APP DF VI 001"],
+"LivingstonFTA" : ["APP DF OPERATIONAL 001"],
+"TCU CommandandResponse" : ["APP DF VI 001"],
+"SCACGFIN" : ["APP C360 DataLake Data Stewards 001"],
+"RCT" : ["APP DF OPERATIONAL 001"],
+"Global 8D" : ["APP DF OPERATIONAL 001"],
+"XPO NLM" : ["APP DF OPERATIONAL 001"],
+"EuAS-PDB" : ["APP DF OPERATIONAL 001"],
+"Monex" : ["APP DF OPERATIONAL 001"],
+"ASR-AR" : ["APP DF OPERATIONAL 001"],
+"CCS FCS" : ["APP DF VI 001"],
+"FOMS" : ["APP C360 DataLake Data Stewards 001"],
+"Global ESB System" : ["APP C360 DataLake Data Stewards 001"],
+"BLESSREC" : ["APP C360 DataLake Data Stewards 001"],
+"Electronic Information System" : ["APP DF EDI 001"],
+"MPDA" : ["APP DF VI 001"],
+"Ent Identity Mgmt" : ["APP DF OPERATIONAL 001"],
+"PEDDS" : ["APP DF OPERATIONAL 001"],
+"FNBO" : ["APP DF OPERATIONAL 001"],
+"GN" : ["APP C360 DataLake Data Stewards 001"],
+"ESBOL" : ["APP C360 DataLake Data Stewards 001"],
+"STARS" : ["APP C360 DataLake Data Stewards 001"],
+"SERVIS2" : ["APP C360 DataLake Data Stewards 001"],
+"GPPS" : ["APP C360 DataLake Data Stewards 001"],
+"FCS BAAN" : ["APP C360 DataLake Data Stewards 001"],
+"First Base Customer Unsubscribe Process" : ["APP DF EDI 001"],
+"AACLKSTRMEU" : ["APP C360 DataLake Data Stewards 001"],
+"Mobile Service Dealer" : ["APP C360 DataLake Data Stewards 001"],
+"Checksheets Service" : ["APP C360 DataLake Data Stewards 001"],
+"FEDEBOM" : ["APP DF OPERATIONAL 001"],
+"CO2FEC" : ["APP DF OPERATIONAL 001"],
+"AACLKSTRMNA" : ["APP C360 DataLake Data Stewards 001"],
+"ESPS" : ["APP C360 DataLake Data Stewards 001"],
+"APB2CSL" : ["APP C360 DataLake Data Stewards 001"],
+"SMARTS" : ["APP C360 DataLake Data Stewards 001"],
+"Vincent" : ["APP C360 DataLake Data Stewards 001"],
+"Deal Maker" : ["APP C360 DataLake Data Stewards 001"],
+"FCSDQuality" : ["APP DF DW Vehicle Service 360 001"],
+"SARS" : ["APP C360 DataLake Data Stewards 001"],
+"CVDOS Scheduler CMD Logs" : ["APP DF VI 001"],
+"FDSP" : ["APP DF VI 001"],
+"ATS" : ["APP DF OPERATIONAL 001"],
+"OASIS" : ["APP C360 DataLake Data Stewards 001"],
+"CUSTDMN" : ["FCGCP-DataEng Support Dev"],
+"Banking Enablement Systems" : ["FCGCP-DataEng Support Dev"],
+"AVD CLSFCN" : ["APP DF VI 001"],
+"Payments" : ["FCGCP-DataEng Support Dev"],
+"IMS Port Block" : ["APP C360 DataLake Data Stewards 001"],
+"Digital Demand Report" : ["APP C360 DataLake Data Stewards 001"],
+"JD Model e Ecom" : ["APP DF OPERATIONAL 001"],
+"C360 MODEL QLIK" : ["APP DF EDI 001"],
+"FEDE DV Extract" : ["APP OPS GDIA 001"],
+"EuAS-ERES" : ["APP DF OPERATIONAL 001"],
+"SIOMMA" : ["APP C360 DataLake Data Stewards 001"],
+"IgnitionCycleSummaryFCS" : ["APP DF VI 001"],
+"VEV Dashboard Extract" : ["APP OPS GDIA 001"],
+"AMEXWork" : ["APP DF OPERATIONAL 001"],
+"SCCAF" : ["APP DF OPERATIONAL 001"],
+"Common Supplier" : ["APP DF EDI 001"],
+"xirgo" : ["APP DF VI 001"],
+"WPP 3rd party data" : ["APP C360 DATA MARTS 001"],
+"CCS" : ["APP DF VI 001"],
+"purchasing datahub" : ["APP DF EDI 001"],
+"Agenda" : ["APP C360 DataLake Data Stewards 001"],
+"FIS" : ["APP DF OPERATIONAL 001"],
+"REDCRS" : ["APP DF OPERATIONAL 001"],
+"ATT wifi hotspot" : ["APP DF VI 001"],
+"OTAConnectedVehicle" : ["APP DF VI 001"],
+"GCAMP" : ["APP C360 DataLake Data Stewards 001"],
+"ACTVIN" : ["APP DF VI 001"],
+"FCSVoyager" : ["APP DF VI 001"],
+"EPSKS" : ["APP DF OPERATIONAL 001"],
+"Pinnacle Loan Originations" : ["FCGCP-DataEng Support Dev"],
+"FMCC Direct Feed" : ["FCGCP-DataEng Support Dev"],
+"FCMS" : ["FCGCP-DataEng Support Dev"],
+"Model E Canadian Dealer Tools" : ["APP C360 DataLake Data Stewards 001"],
+"Pinnacle Account Services" : ["FCGCP-DataEng Support Dev"],
+"DISNE" : ["FCGCP-DataEng Support Dev"],
+"FMCC Risk Modeling Mart" : ["FCGCP-DataEng Support Dev"],
+"GSLTS" : ["APP C360 DataLake Data Stewards 001"],
+"YMS1" : ["APP DF OPERATIONAL 001"],
+"QNPS" : ["APP DF EDI 001"],
+"WERS-ADHOC" : ["APP DF OPERATIONAL 001"],
+"DTC" : ["APP DF VI 001"],
+"JD Power FCSD Warranty Underwriting" : ["APP DF DW Vehicle Service 360 001"],
+"DTA Service" : ["APP C360 DataLake Data Stewards 001"],
+"Imagine  NBSC LTS" : ["FCGCP-DataEng Support Dev"],
+"Daily Summary" : ["APP DF VI 001"],
+"Motorintelligence" : ["APP DF Third Party 001"],
+"SNURK" : ["APP DF OPERATIONAL 001"],
+"EuAS-AIMS" : ["APP C360 DataLake Data Stewards 001"],
+"Experian" : ["APP C360 DataLake Data Stewards 001"],
+"LivingstonImp" : ["APP DF OPERATIONAL 001"],
+"ServiceBay" : ["APP DF OPERATIONAL 001"],
+"DFDlrServiceExpectancy" : ["APP DF OPERATIONAL 001"],
+"app feedback data" : ["APP DF OPERATIONAL 001"],
+"IMS Share Calculations" : ["APP C360 DataLake Data Stewards 001"],
+"iperceptions tcx" : ["APP DF OPERATIONAL 001"],
+"TCU4G PRS" : ["APP DF VI 001"],
+"IgnitionCycleSummary" : ["APP DF VI 001"],
+"GLAS" : ["FCGCP-DataEng Support Dev"],
+"ACS" : ["FCGCP-DataEng Support Dev"],
+"MPA" : ["APP DF VI 001"],
+"Sales Force" : ["FCGCP-DataEng Support Dev"],
+"Integrated Services" : ["APP C360 DATA MARTS 001"],
+"Supplier" : ["APP OPS PD DF 001"],
+"FordPass App" : ["FCGCP-DataEng Support Dev"],
+"SOFRELS" : ["APP C360 DataLake Data Stewards 001"],
+"Churn Rpt" : ["APP DF OPERATIONAL 001"],
+"CEPS P" : ["APP DF EDI 001"],
+"OTA" : ["APP DF VI 001"],
+"DTC Summary PJ1" : ["APP DF VI 001"],
+"Workforce" : ["APP DF OPERATIONAL 001"],
+"Model E Dealer Dashboard Waiver" : ["APP C360 DataLake Data Stewards 001"],
+"PARMS" : ["FCGCP-DataEng Support Dev"],
+"north america services api" : ["FCGCP-DataEng Support Dev"],
+"FMCC Workflow" : ["FCGCP-DataEng Support Dev"],
+"ibuy" : ["APP DF EDI 001"],
+"Ariba Direct Sourcing" : ["APP DF EDI 001"],
+"Used Vehicle Information System" : ["APP C360 DataLake Data Stewards 001"],
+"IHS" : ["APP DF OPERATIONAL 001"],
+"CVAS" : ["APP DF VI 001"],
+"GOLDD" : ["APP C360 DataLake Data Stewards 001"],
+"MPA and MPDA" : ["APP DF VI 001"],
+"VLM Master VIN SPN" : ["APP DF VI 001"],
+"PACE G2G C2V auth" : ["APP DF VI 001"],
+"CCS and CCSFCS" : ["APP DF VI 001"],
+"PeakDrivingTimePredictn" : ["APP DF VI 001"],
+"CN204" : ["APP C360 DataLake Data Stewards 001"],
+"ASU Summary" : ["APP DF VI 001"],
+"FC Ext Interfaces" : ["FCGCP-DataEng Support Dev"],
+"OTACV data products" : ["APP DF VI 001"],
+"cloc invitation" : ["FCGCP-DataEng Support Dev"],
+"ARVE" : ["APP C360 DataLake Data Stewards 001"],
+"VDDS" : ["APP DF VI 001"],
+"active vin summary prs" : ["APP DF VI 001"],
+"DPES" : ["APP C360 DataLake Data Stewards 001"],
+"ASAP" : ["APP DF EDI 001"],
+"Amplitude" : ["APP C360 DataLake Data Stewards 001"],
+"Active VIN Summary PSU" : ["APP DF VI 001"],
+"EuFA-GRIMM" : ["APP DF EDI 001"],
+"IRIS" : ["APP DF OPERATIONAL 001"],
+"Caliber" : ["APP C360 DataLake Data Stewards 001"],
+"DTC Summary PRS" : ["APP DF VI 001"],
+"FAD Sales Reporting" : ["APP C360 DataLake Data Stewards 001"],
+"Lending Automotive" : ["FCGCP-DataEng Support Dev"],
+"NOBLE DIALER FILES" : ["FCGCP-DataEng Support Dev"],
+"MMA" : ["APP DF VI 001"],
+"Medallia _PTS" : ["APP C360 DataLake Data Stewards 001"],
+"Adobe Marketing Cloud" : ["FCGCP-DataEng Support Dev"],
+"Pinnacle Account Servicing Batch" : ["FCGCP-DataEng Support Dev"],
+"RMS" : ["APP C360 DataLake Data Stewards 001"],
+"Prognostics Analytics Engine" : ["APP DF VI 001"],
+"PATEN" : ["APP C360 DataLake Data Stewards 001"],
+"DMSR" : ["APP DF EDI 001"],
+"SAVE" : ["APP DF VI 001"],
+"GODW" : ["APP C360 DataLake Data Stewards 001"],
+"Subscription Services Platform" : ["APP DF VI 001"],
+"EPID2" : ["APP DF VI 001"],
+"GVAP" : ["FCGCP-DataEng Support Dev"],
+"GUCCE" : ["FCGCP-DataEng Support Dev"],
+"NextGen DM" : ["FCGCP-DataEng Support Dev"],
+"CEDTE Intelligent Range" : ["APP DF VI 001"],
+"AVD" : ["APP DF VI 001"],
+"C360UCE" : ["C360 Use Case Enablement"],
+"FBBP" : ["APP PDO GDIA 51719"],
+"Account Manager na" : ["FCGCP-DataEng Support Dev"],
+"KBS Mainframe" : ["FCGCP-DataEng Support Dev"],
+"Global Product Development System" : ["FCGCP-DataEng Support Dev"],
+"Trip Summary PSU" : ["APP DF VI 001"],
+"SLT Reporting" : ["FCGCP-DataEng Support Dev"],
+"c360 uce eu" : ["C360 Use Case Enablement"],
+"SMARTBOARD" : ["APP C360 DataLake Data Stewards 001"],
+"Vin to ISO Country" : ["APP DF VI 001"],
+"SSAT" : ["APP DF EDI 001"],
+"Weather Source" : ["APP DF Third Party 001"],
+"FBMS" : ["APP C360 DataLake Data Stewards 001"],
+"Melissa data" : ["APP DF OPERATIONAL 001"],
+"UQM DM" : ["APP OPS PD DF 001"],
+"FIS Dealer Finance" : ["FCGCP-DataEng Support Dev"],
+"WIL PRS" : ["APP DF VI 001"],
+"GPIRS" : ["APP DF EDI 001"],
+"WIL PJ1" : ["APP DF VI 001"],
+"OMS IBM Sterling" : ["APP C360 DataLake Data Stewards 001"],
+"Enhanced Parts Follow Up" : ["APP PDO GDIA 51719"],
+"CEPS NonP GCP" : ["APP DF EDI 001"],
+"SNURK2" : ["APP DF OPERATIONAL 001"],
+"AVDD Carmon and scrpt" : ["APP DF VI 001"],
+"C360 UCE TBQ 2" : ["C360 Use Case Enablement"],
+"fcdataplex" : ["FCGCP-DataEng Support Dev"],
+"My Next Vehicle" : ["FCGCP-DataEng Support Dev"],
+"MECM DM" : ["APP OPS PD DF 001"],
+"DP DM" : ["APP C360 DATA MARTS 001"],
+"FMCC Dealer Advisor Mart" : ["FCGCP-DataEng Support Dev"],
+"CVMS US Company Vehicles" : ["APP DF OPERATIONAL 001"],
+"ToolsNet" : ["APP DF OPERATIONAL 001"],
+"Fastmarkets" : ["APP DF Third Party 001"],
+"EUMT" : ["APP DF EDI 001"],
+"MAIVS DM" : ["APP OPS PD DF 001"],
+"vodafone" : ["APP DF VI 001"],
+"zubie" : ["APP DF VI 001"],
+"Alteris" : ["APP DF Third Party 001"],
+"TopTechs" : ["APP DF Third Party 001"],
+"TCX Survey Response" : ["APP C360 DataLake Data Stewards 001"],
+"Debt Manager" : ["FCGCP-DataEng Support Dev"],
+"Pinnacle Common Logon" : ["FCGCP-DataEng Support Dev"],
+"Global Collections System" : ["FCGCP-DataEng Support Dev"],
+"C360 CRM Campaign and Consent" : ["APP C360 DATA MARTS 001"],
+"calibre" : ["APP DF Third Party 001"],
+"FMCC Lending Automotive Mart" : ["FCGCP-DataEng Support Dev"],
+"grdb dm" : ["Global Reliability Dashboard"],
+"comscore" : ["APP DF Third Party 001"],
+"gdia" : ["FCGCP-DataEng Support Dev"],
+"kantar" : ["APP DF Third Party 001"],
+"brandwatch" : ["APP DF Third Party 001"],
+"gcp - jd power" : ["APP DF Third Party 001"],
+"Customer Experience DM" : ["FCGCP-DataEng Support Dev"],
+"DoMtoPlantsDictionary" : ["APP DF OPERATIONAL 001"],
+"Global Brand Health Study" : ["APP DF Third Party 001"],
+"MORLEY" : ["APP C360 DataLake Data Stewards 001"],
+"Rapid Ratings" : ["APP DF Third Party 001"],
+"Dun and Bradstreet" : ["APP DF Third Party 001"],
+"MSX Express" : ["APP DF Third Party 001"],
+"helix" : ["APP DF Third Party 001"],
+"SyncroPro Portugal Fleet" : ["APP C360 DataLake Data Stewards 001"],
+"Wunderman Fleet Spain" : ["APP C360 DataLake Data Stewards 001"],
+"wards" : ["APP DF Third Party 001"],
+"Consumer AXZ" : ["APP C360 DataLake Data Stewards 001"],
+"Prevalent" : ["APP DF Third Party 001"],
+"GCQIS Data Mart" : ["APP OPS FCSD 106"],
+"jackson dawson" : ["APP DF Third Party 001"],
+"Privilege Club" : ["APP C360 DataLake Data Stewards 001"],
+"FNBO Loyalty Credit Card" : ["APP C360 DATA MARTS 001"],
+"dpa5" : ["APP DF OPERATIONAL 001"],
+"FIMPS" : ["APP C360 DataLake Data Stewards 001"],
+"QED Morley" : ["APP DF Third Party 001"],
+"VisPVSVAL" : ["APP DF EDI 001"],
+"Vehicle Service 360" : ["APP DF DM Service360 001"],
+"ARFD" : ["APP C360 DataLake Data Stewards 001"],
+"Vehicle Charging DataProduct" : ["APP OPS PEMECFDP"],
+"CAPS PG CS" : ["APP DF OPERATIONAL 001"],
+"SWT" : ["APP DF EDI 001"],
+"FCSD eCommerce" : ["APP C360 DataLake Data Stewards 001"],
+"ICS" : ["APP DF OPERATIONAL 001"],
+"CPO" : ["APP C360 DataLake Data Stewards 001"],
+"trip summary" : ["APP DF VI 001"],
+"SunRun" : ["APP C360 DataLake Data Stewards 001"],
+"GCP" : ["APP DF EDI 001"],
+"eRMA" : ["APP DF EDI 001"],
+"BNPP" : ["APP C360 DataLake Data Stewards 001"],
+"NDPC II" : ["APP DF EDI 001"],
+"Cyclone City Van" : ["APP DF VI 001"],
+"MyCDHR" : ["APP DF EDI 001"],
+"CVFMA" : ["APP DF VI 001"],
+"Sales Force EU CRM" : ["APP C360 DataLake Data Stewards 001"],
+"Ford Pro Commercial Vehicle Center" : ["APP C360 DataLake Data Stewards 001"],
+"Concentrix" : ["APP C360 DataLake Data Stewards 001"],
+"CRIS2" : ["APP DF OPERATIONAL 001"],
+"Special Request" : ["APP C360 DataLake Data Stewards 001"],
+"DSR" : ["APP C360 DataLake Data Stewards 001"],
+"Dealer Wholesale and Vehicle" : ["FCGCP-DataEng Support Dev"],
+"CDM" : ["APP C360 DATA MARTS 001"],
+"AFRL" : ["APP C360 DataLake Data Stewards 001"],
+"FST FVA" : ["APP DF EDI 001"],
+"GPW" : ["APP C360 DataLake Data Stewards 001"],
+"IgnitionCycleSummaryPRS" : ["APP DF VI 001"],
+"Promata Fleet" : ["APP DF OPERATIONAL 001"],
+"Special Service Support Center Website" : ["APP DF EDI 001"],
+"CMMS3" : ["APP DF OPERATIONAL 001"],
+"JD Power Helix" : ["APP DF Third Party 001"],
+"MarketSource" : ["APP DF Third Party 001"],
+"customer financial" : ["FCGCP-DataEng Support Dev"],
+"Data Factory Admin Projects Metadata" : ["APP DF CURATION 001"],
+"Contest" : ["APP DF OPERATIONAL 001"],
+"EuroVIS" : ["APP C360 DataLake Data Stewards 001"],
+"GSEC" : ["Software & Technology Data Steward"],
+"ICBC" : ["APP C360 DataLake Data Stewards 001"],
+"TFOAMS" : ["APP C360 DataLake Data Stewards 001"],
+"FACTONEPC" : ["APP DF EDI 001"],
+"IVI Analytics Taxonomy" : ["APP DF OPERATIONAL 001"],
+"pega" : ["APP C360 DataLake Data Stewards 001"],
+"eLearnVAL" : ["APP DF EDI 001"],
+"Residual API" : ["FCGCP-DataEng Support Dev"],
+"GRCAM" : ["APP OPS GDIA 001"],
+"Blue Cruise" : ["APP OPS PEMCVGFA"],
+"OWSClaims" : ["APP DF OPERATIONAL 001"],
+"FC CIS" : ["FCGCP-DataEng Support Dev"],
+"ARDR" : ["APP DF OPERATIONAL 001"],
+"ARMR" : ["APP DF VI 001"],
+"DriverScoreData" : ["APP DF VI 001"],
+"OCU4" : ["APP DF VI 001"],
+"EuroMivis" : ["FCGCP-DataEng Support Dev"],
+"TER" : ["APP DF OPERATIONAL 001"],
+"LEAP" : ["APP C360 DataLake Data Stewards 001"],
+"Trip Summary PJ1" : ["APP DF VI 001"],
+"WQ" : ["APP DF EDI 001"],
+"Enrollment Gateway" : ["APP DF VI 001"],
+"Qmerit" : ["APP DF Third Party 001"],
+"MFM" : ["APP DF OPERATIONAL 001"],
+"FP Zuora" : ["APP C360 DataLake Data Stewards 001"],
+"AWS" : ["APP DF OPERATIONAL 001"],
+"CAPS" : ["APP C360 DataLake Data Stewards 001"],
+"Trip Summary PRS" : ["APP DF VI 001"],
+"Internal Fitness Data" : ["APP OPS PEMECFDP"],
+"CDM TBQ" : ["APP C360 DATA MARTS 001"],
+"midas" : ["APP DF OPERATIONAL 001"],
+"EDW-GDW" : ["FCGCP-DataEng Support Dev"],
+"ecrmldm" : ["FCGCP-DataEng Support Dev"],
+"WMA" : ["APP DF OPERATIONAL 001"],
+"FMCC Email Campaign" : ["FCGCP-DataEng Support Dev"],
+"GSPAS" : ["APP DF OPERATIONAL 001"],
+"FMCC Logging XREF" : ["FCGCP-DataEng Support Dev"],
+"IERP" : ["APP DF EDI 001"],
+"Phone as a Key" : ["APP DF VI 001"],
+"TCU4G PSU" : ["APP DF VI 001"],
+"TCU4G PJ1" : ["APP DF VI 001"],
+"PDTP" : ["APP DF VI 001"],
+"TCU4G FCS" : ["APP DF VI 001"],
+"QAD" : ["APP DF EDI 001"],
+"Dynatrace" : ["APP DF VI 001"],
+"TCU4Gcom360" : ["APP DF VI 001"],
+"TCU4G FCS AVIS" : ["APP DF VI 001"],
+"PTA" : ["FCGCP-DataEng Support Dev"],
+"Vehicle Marketing" : ["C360 Use Case Enablement"],
+"Financial Accounting" : ["FCGCP-DataEng Support Dev"],
+"Release Pull Ahead" : ["APP PDO GDIA 51311"],
+"Datamart for Software and Technology" : ["ITDH Portfolio & Security Analytics"],
+"VISTA" : ["APP C360 DataLake Data Stewards 001"],
+"DTC Summary" : ["APP DF VI 001"],
+"TCU4G Datawarehouse" : ["APP DF VI 001"],
+"CPRII" : ["APP DF OPERATIONAL 001"],
+"Active Vin Summary" : ["APP DF VI 001"],
+"customer subject area" : ["APP C360 DATA WAREHOUSE 001"],
+"STG CDM" : ["APP C360 DATA MARTS 001"],
+"IgnitionCycleSummary DW" : ["APP DF VI 001"],
+"Daily Summary DW" : ["APP DF VI 001"],
+"WIL Summary" : ["APP DF VI 001"],
+"vehdc" : ["APP C360 DATA WAREHOUSE 001"],
+"WSMOD" : ["APP C360 DataLake Data Stewards 001"],
+"GCVP" : ["APP C360 DataLake Data Stewards 001"],
+"Ford Direct" : ["APP C360 DataLake Data Stewards 001"],
+"AOTVOTPOLK" : ["APP C360 DataLake Data Stewards 001"],
+"AgingPoints" : ["APP C360 DataLake Data Stewards 001"],
+"Bond FGE Immersion Training" : ["APP C360 DataLake Data Stewards 001"],
+"CISCO" : ["APP C360 DataLake Data Stewards 001"],
+"MEVIS" : ["APP C360 DataLake Data Stewards 001"],
+"SAMIS" : ["APP C360 DataLake Data Stewards 001"],
+"GTAC" : ["APP C360 DataLake Data Stewards 001"],
+"BDI" : ["APP C360 DataLake Data Stewards 001"],
+"SCA-C EU SQL" : ["APP C360 DataLake Data Stewards 001"],
+"Market Analyzer" : ["APP C360 DataLake Data Stewards 001"],
+"GFORCE3" : ["APP C360 DataLake Data Stewards 001"],
+"CUCM" : ["APP C360 DataLake Data Stewards 001"],
+"US Weekly Sales Feed" : ["APP C360 DataLake Data Stewards 001"],
+"TMAC" : ["APP C360 DataLake Data Stewards 001"],
+"NASARS" : ["APP C360 DataLake Data Stewards 001"],
+"Sell out reporting" : ["APP C360 DataLake Data Stewards 001"],
+"Master Vehicle List" : ["APP C360 DataLake Data Stewards 001"],
+"PinnacleLO" : ["APP C360 DataLake Data Stewards 001"],
+"Mailing Pref Service" : ["APP C360 DataLake Data Stewards 001"],
+"Cthames Disposal" : ["APP C360 DataLake Data Stewards 001"],
+"FBC" : ["APP C360 DataLake Data Stewards 001"],
+"fptlds" : ["APP C360 DataLake Data Stewards 001"],
+"DCDS" : ["APP C360 DataLake Data Stewards 001"],
+"Medallia" : ["APP C360 DataLake Data Stewards 001"],
+"Competitive Data Engine" : ["APP C360 DataLake Data Stewards 001"],
+"GLADS" : ["APP C360 DataLake Data Stewards 001"],
+"Engagement Communication and Response" : ["APP C360 DataLake Data Stewards 001"],
+"Salesforce" : ["APP C360 DataLake Data Stewards 001"],
+"DS-DC" : ["APP C360 DataLake Data Stewards 001"],
+"Poland Fleet" : ["APP C360 DataLake Data Stewards 001"],
+"Deal Marketing Platform" : ["APP C360 DataLake Data Stewards 001"],
+"DELIVR" : ["APP C360 DataLake Data Stewards 001"],
+"Campaign Administration and Microsites" : ["APP C360 DataLake Data Stewards 001"],
+"SEER" : ["APP C360 DataLake Data Stewards 001"],
+"Market Rep" : ["APP C360 DataLake Data Stewards 001"],
+"SCA CP" : ["APP C360 DataLake Data Stewards 001"],
+"GCCTMSD" : ["APP C360 DataLake Data Stewards 001"],
+"SCA-C-CAP" : ["APP C360 DataLake Data Stewards 001"],
+"GEMSL" : ["APP DF OPERATIONAL 001"],
+"GCCT" : ["APP C360 DataLake Data Stewards 001"],
+"Sales Daily Monthly" : ["APP C360 DataLake Data Stewards 001"],
+"SCA-C EU DB2" : ["APP C360 DataLake Data Stewards 001"],
+"Sales Force C360SF" : ["APP C360 DataLake Data Stewards 001"],
+"NMPGPS" : ["APP DF OPERATIONAL 001"],
+"IMLFP" : ["APP DF OPERATIONAL 001"],
+"DETC" : ["APP DF OPERATIONAL 001"],
+"BOBQUOTE" : ["APP DF OPERATIONAL 001"],
+"Fuel Tank Capacity" : ["APP DF OPERATIONAL 001"],
+"EOL Quality Suite" : ["APP DF OPERATIONAL 001"],
+"GCQIS" : ["APP DF OPERATIONAL 001"],
+"MOCA" : ["APP DF OPERATIONAL 001"],
+"EUROVAC" : ["APP DF OPERATIONAL 001"],
+"QWX" : ["APP DF OPERATIONAL 001"],
+"QDAS" : ["APP DF OPERATIONAL 001"],
+"AIMWEB" : ["APP DF OPERATIONAL 001"],
+"Attribute Based Access Control" : ["APP DF OPERATIONAL 001"],
+"ILM" : ["APP DF OPERATIONAL 001"],
+"PCM" : ["APP DF OPERATIONAL 001"],
+"EVMS" : ["APP DF OPERATIONAL 001"],
+"WADR" : ["APP DF OPERATIONAL 001"],
+"CARE" : ["APP DF OPERATIONAL 001"],
+"CRID2" : ["APP DF OPERATIONAL 001"],
+"FOCFPSD" : ["APP DF OPERATIONAL 001"],
+"SABA" : ["APP DF OPERATIONAL 001"],
+"VMFE" : ["APP DF OPERATIONAL 001"],
+"GI TI" : ["APP DF OPERATIONAL 001"],
+"PERS" : ["APP DF OPERATIONAL 001"],
+"gem" : ["APP DF OPERATIONAL 001"],
+"IVMR" : ["APP DF OPERATIONAL 001"],
+"VID" : ["APP DF OPERATIONAL 001"],
+"GOTDGWS" : ["APP DF OPERATIONAL 001"],
+"SPCPS" : ["APP DF OPERATIONAL 001"],
+"HRIMS" : ["APP DF OPERATIONAL 001"],
+"PRISM" : ["APP DF OPERATIONAL 001"],
+"OnTrack MIS" : ["APP DF OPERATIONAL 001"],
+"ESPARS" : ["APP DF OPERATIONAL 001"],
+"iERP Finance" : ["APP DF OPERATIONAL 001"],
+"BlackLine Account Reconciliation" : ["APP DF OPERATIONAL 001"],
+"PCAM" : ["APP DF OPERATIONAL 001"],
+"sc360" : ["APP DF OPERATIONAL 001"],
+"EIdM" : ["APP DF OPERATIONAL 001"],
+"Ford Policy Portal" : ["APP DF OPERATIONAL 001"],
+"WF1" : ["APP DF OPERATIONAL 001"],
+"OES" : ["APP DF OPERATIONAL 001"],
+"EuMP-PFEP" : ["APP DF OPERATIONAL 001"],
+"PDO" : ["APP DF OPERATIONAL 001"],
+"GTSV" : ["APP DF OPERATIONAL 001"],
+"MPNR" : ["APP DF OPERATIONAL 001"],
+"GSDB" : ["APP DF OPERATIONAL 001"],
+"CM4D" : ["APP DF OPERATIONAL 001"],
+"Integrity" : ["APP DF OPERATIONAL 001"],
+"PDOR2" : ["APP DF OPERATIONAL 001"],
+"GOTD-OGMF" : ["APP DF OPERATIONAL 001"],
+"OFMDW" : ["APP DF OPERATIONAL 001"],
+"Capability Study" : ["APP DF OPERATIONAL 001"],
+"VDLS" : ["APP DF OPERATIONAL 001"],
+"HVBOM" : ["APP DF OPERATIONAL 001"],
+"Biztalk" : ["APP DF OPERATIONAL 001"],
+"SOE" : ["APP DF OPERATIONAL 001"],
+"STAMPS" : ["APP DF OPERATIONAL 001"],
+"EuPFS-PVS" : ["APP DF OPERATIONAL 001"],
+"ECIS" : ["APP DF OPERATIONAL 001"],
+"GSPAS DM" : ["APP DF OPERATIONAL 001"],
+"mmhp premium freight" : ["APP DF OPERATIONAL 001"],
+"OSB" : ["APP DF OPERATIONAL 001"],
+"PEARS" : ["APP DF OPERATIONAL 001"],
+"TVMER" : ["APP DF OPERATIONAL 001"],
+"FMS" : ["APP DF OPERATIONAL 001"],
+"PTOOBL" : ["APP DF OPERATIONAL 001"],
+"ECICDR" : ["APP DF OPERATIONAL 001"],
+"BSAQ" : ["APP DF OPERATIONAL 001"],
+"OMS-SOB" : ["APP DF OPERATIONAL 001"],
+"CEVA" : ["APP DF OPERATIONAL 001"],
+"MFM DM" : ["APP DF OPERATIONAL 001"],
+}
+
+    function changecat(value) {
+        if (value.length == 0) document.getElementById("QUELIST").innerHTML = "<option></option>";
+        else {
+            var catOptions = "";
+            for (categoryId in SubAppByCategory[value]) {
+                catOptions += "<option>" + SubAppByCategory[value][categoryId] + "</option>";
+            }
+            document.getElementById("QUELIST").innerHTML = catOptions;
+        }
+    }
+    
+
+
+    function updateTitleTextbox() {
+      var dropdown1Value = document.getElementById('DETAILS_LIST').value;
+      var dropdown2Value = document.getElementById('SUB_CATE_LIST').value;
+      var textbox = document.getElementById('title_textbox');
+
+      // Concatenate the selected values and populate the textbox
+      //textbox.value = dropdown1Value + ' - ' + dropdown2Value;
+	  textbox.value = dropdown2Value + ' - ' ;
+    }
+
+    function handleChange(selectedValue) {
+        changecat(selectedValue); // Call changecat function with the selected value
+        updateTitleTextbox(); // Call updateTitleTextbox function
+    }
+    
+    </script>
+
+</html>
